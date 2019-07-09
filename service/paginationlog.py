@@ -102,10 +102,13 @@ def listpage(param):
     else:
         if param.has_key("page"):
             page = param["page"]
+            src_host0=""
+            if param.has_key("src_host"):
+                src_host0=param["src_host"]
             # print page
             page_list = []
             second_page_list = []
-            for i in logselect.page_select_attack(page):
+            for i in logselect.page_select_attack(page,src_host0):
                 dict_param = {"id":i.id,"dst_host":i.dst_host,"dst_port":i.dst_port,"honeycred":i.honeycred,"local_time":i.local_time.strftime("%Y-%m-%d %H:%M:%S"),"hostname":i.hostname,\
             "password":i.password,"path":i.path,"skin":i.skin,"useragent":i.useragent,"username":i.username,"session":i.session,"localversion":i.localversion,\
             "remoteversion":i.remoteversion,"df":i.df,"idid":i.idid,"inin":i.inin,"lenlen":i.lenlen,"mac":i.mac,"outout":i.outout,"prec":i.prec,\
@@ -184,9 +187,9 @@ def listpage(param):
             # print page_res
             return page_res
 
-def total_atk_page():
+def total_atk_page(param):
     # 查询攻击列表数量
-    return logselect.select_attack_total()
+    return logselect.select_attack_total(param)
 
 
 def total_wit_page():

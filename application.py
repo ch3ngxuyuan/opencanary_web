@@ -11,7 +11,7 @@ import os
 import logging
 from base64 import b64encode
 from uuid import uuid4
-
+import re
 
 settings = dict(
     # 设置Debug开关

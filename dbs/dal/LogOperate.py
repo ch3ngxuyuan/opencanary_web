@@ -10,9 +10,9 @@
 from dbs.initdb import DBSession
 from dbs.models.HoneypotLog import OpencanaryLog
 from dbs.models.Whiteip import Whiteip
-from sqlalchemy import desc, asc, extract, func, distinct
+from sqlalchemy import desc, asc, extract, func, distinct, and_,or_
 from sqlalchemy.exc import InvalidRequestError
-
+from sqlalchemy.sql import text
 
 class LogOp:
     """增删改查"""
@@ -56,15 +56,22 @@ class LogOp:
             return False
 
     # 查询日志表攻击列表数据
-    def page_select_attack(self, page_index):
+    def page_select_attack(self, page_index, src_host):
         try:
             page_size = 10
             # num = 10*int(page) - 10
-            logselect = self.session.query(OpencanaryLog).filter(
-                OpencanaryLog.white == 2).order_by(
-                    desc(OpencanaryLog.local_time),
-                    OpencanaryLog.id).limit(page_size).offset(
-                        (page_index - 1) * page_size)
+            if src_host:
+                logselect = self.session.query(OpencanaryLog).filter(
+                    and_(OpencanaryLog.white == 2,OpencanaryLog.src_host==src_host)).order_by(
+                        desc(OpencanaryLog.local_time),
+                        OpencanaryLog.id).limit(page_size).offset(
+                            (page_index - 1) * page_size)
+            else:
+                logselect = self.session.query(OpencanaryLog).filter(
+                    OpencanaryLog.white == 2).order_by(
+                        desc(OpencanaryLog.local_time),
+                        OpencanaryLog.id).limit(page_size).offset(
+                            (page_index - 1) * page_size)
             return logselect
         except InvalidRequestError:
             self.session.rollback()
@@ -140,11 +147,16 @@ class LogOp:
             self.session.close()
 
     # 查询攻击数据总量
-    def select_attack_total(self):
+    def select_attack_total(self,src_host):
         try:
-            total_attack = self.session.query(
-                func.count(OpencanaryLog.id)).filter(
-                    OpencanaryLog.white == 2).scalar()
+            if src_host!="":
+                total_attack = self.session.query(
+                    func.count(OpencanaryLog.id)).filter(
+                        and_(OpencanaryLog.white == 2,OpencanaryLog.src_host==src_host)).scalar()
+            else:
+                total_attack = self.session.query(
+                    func.count(OpencanaryLog.id)).filter(
+                        OpencanaryLog.white == 2).scalar()
             return total_attack
         except InvalidRequestError:
             self.session.rollback()
