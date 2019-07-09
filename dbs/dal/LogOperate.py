@@ -56,22 +56,28 @@ class LogOp:
             return False
 
     # 查询日志表攻击列表数据
-    def page_select_attack(self, page_index, src_host):
+    def page_select_attack(self, page_index, src_host,src_port,logtype,node_id,dst_host,dst_port):
         try:
             page_size = 10
             # num = 10*int(page) - 10
+            where = "white = 2"
             if src_host:
-                logselect = self.session.query(OpencanaryLog).filter(
-                    and_(OpencanaryLog.white == 2,OpencanaryLog.src_host==src_host)).order_by(
-                        desc(OpencanaryLog.local_time),
-                        OpencanaryLog.id).limit(page_size).offset(
-                            (page_index - 1) * page_size)
-            else:
-                logselect = self.session.query(OpencanaryLog).filter(
-                    OpencanaryLog.white == 2).order_by(
-                        desc(OpencanaryLog.local_time),
-                        OpencanaryLog.id).limit(page_size).offset(
-                            (page_index - 1) * page_size)
+                where += ' and src_host="' + str(src_host) + '"'
+            if src_port:
+                where += " and src_port=" + src_port
+            if logtype:
+                where += ' and logtype="' + str(logtype) + '"'
+            if node_id:
+                where += ' and node_id="' + str(node_id) + '"'
+            if dst_host:
+                where += ' and dst_host="' + str(dst_host) + '"'
+            if dst_port:
+                where += " and dst_port=" + dst_port
+            logselect = self.session.query(OpencanaryLog).filter(
+                text(where)).order_by(
+                    desc(OpencanaryLog.local_time),
+                    OpencanaryLog.id).limit(page_size).offset(
+                        (page_index - 1) * page_size)
             return logselect
         except InvalidRequestError:
             self.session.rollback()
@@ -147,16 +153,24 @@ class LogOp:
             self.session.close()
 
     # 查询攻击数据总量
-    def select_attack_total(self,src_host):
+    def select_attack_total(self,src_host,src_port,logtype,node_id,dst_host,dst_port):
         try:
-            if src_host!="":
-                total_attack = self.session.query(
-                    func.count(OpencanaryLog.id)).filter(
-                        and_(OpencanaryLog.white == 2,OpencanaryLog.src_host==src_host)).scalar()
-            else:
-                total_attack = self.session.query(
-                    func.count(OpencanaryLog.id)).filter(
-                        OpencanaryLog.white == 2).scalar()
+            where = "white = 2"
+            if src_host:
+                where += ' and src_host="' + str(src_host) + '"'
+            if src_port:
+                where += " and src_port=" + src_port
+            if logtype:
+                where += ' and logtype="' + str(logtype) + '"'
+            if node_id:
+                where += ' and node_id="' + str(node_id) + '"'
+            if dst_host:
+                where += ' and dst_host="' + str(dst_host) + '"'
+            if dst_port:
+                where += " and dst_port=" + dst_port
+            total_attack = self.session.query(
+                func.count(OpencanaryLog.id)).filter(
+                    text(where)).scalar()
             return total_attack
         except InvalidRequestError:
             self.session.rollback()

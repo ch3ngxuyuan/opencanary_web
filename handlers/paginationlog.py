@@ -47,8 +47,13 @@ class GetlistJsonHandler(BaseHandler):
         # 分页列表
         types = self.get_argument('type')
         src_host = self.get_argument('src_host','')
+        src_port = self.get_argument('src_port','')
+        logtype = self.get_argument('logtype','')
+        node_id = self.get_argument('node_id','')
+        dst_host = self.get_argument('dst_host','')
+        dst_port = self.get_argument('dst_port','')
         if types:
             if int(types) == 1:
                 self.write(str(total_wit_page()))
             elif int(types) == 2:
-                self.write(str(total_atk_page(src_host)))
+                self.write(str(total_atk_page(src_host,src_port,logtype,node_id,dst_host,dst_port)))

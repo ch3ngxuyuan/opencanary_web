@@ -1,3 +1,7 @@
+.gitignore
 *.pyc
 *.DS_Store
 dbs/initdb.py
+vue-manage-system/node_modules/
+vue-manage-system/config/dev.env.js
+dist/*.*

@@ -99,16 +99,32 @@ def listpage(param):
         page_res = {"list": second_page_list}
         # print page_res
         return page_res
-    else:
+    else:#attack list
         if param.has_key("page"):
             page = param["page"]
+            
             src_host0=""
             if param.has_key("src_host"):
                 src_host0=param["src_host"]
-            # print page
+            src_port=""
+            if param.has_key("src_port"):
+                src_port=param["src_port"]
+            logtype=""
+            if param.has_key("logtype"):
+                logtype=param["logtype"]
+            node_id=""
+            if param.has_key("node_id"):
+                node_id=param["node_id"]
+            dst_host=""
+            if param.has_key("dst_host"):
+                dst_host=param["dst_host"]
+            dst_port=""
+            if param.has_key("dst_port"):
+                dst_port=param["dst_port"]
+            
             page_list = []
             second_page_list = []
-            for i in logselect.page_select_attack(page,src_host0):
+            for i in logselect.page_select_attack(page,src_host0,src_port,logtype,node_id,dst_host,dst_port):
                 dict_param = {"id":i.id,"dst_host":i.dst_host,"dst_port":i.dst_port,"honeycred":i.honeycred,"local_time":i.local_time.strftime("%Y-%m-%d %H:%M:%S"),"hostname":i.hostname,\
             "password":i.password,"path":i.path,"skin":i.skin,"useragent":i.useragent,"username":i.username,"session":i.session,"localversion":i.localversion,\
             "remoteversion":i.remoteversion,"df":i.df,"idid":i.idid,"inin":i.inin,"lenlen":i.lenlen,"mac":i.mac,"outout":i.outout,"prec":i.prec,\
@@ -187,9 +203,9 @@ def listpage(param):
             # print page_res
             return page_res
 
-def total_atk_page(param):
+def total_atk_page(src_host,src_port,logtype,node_id,dst_host,dst_port):
     # 查询攻击列表数量
-    return logselect.select_attack_total(param)
+    return logselect.select_attack_total(src_host,src_port,logtype,node_id,dst_host,dst_port)
 
 
 def total_wit_page():
