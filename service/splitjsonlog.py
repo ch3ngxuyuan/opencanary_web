@@ -471,6 +471,7 @@ def parserlog(jsonlog):
                                 logtype = 'http代理登录尝试'
                             content = "攻击主机：" + src_host + "--" + "被攻击主机：" + dst_host + "--" + "攻击时间：" + local_time
                             # 将发送邮件丢到任务队列
+                            """
                             sched.add_job(
                                 send_mail,
                                 'date',
@@ -478,7 +479,8 @@ def parserlog(jsonlog):
                                           datetimes.timedelta(seconds=1)),
                                 args=["蜜罐告警：" + logtype, content],
                                 id=str(uuid.uuid1()))
-                            # send_mail("蜜罐告警："+logtype,content)
+                            #send_mail("蜜罐告警："+logtype,content)
+                            """
                             return True
             else:
                 return False

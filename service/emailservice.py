@@ -11,6 +11,7 @@ import smtplib
 from email.mime.text import MIMEText
 from util.config import ini_info
 from application import emailfile, mail_host, mail_user, mail_pass, mail_postfix
+import time
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -27,24 +28,26 @@ def maillists():
 
 def send_mail(sub, content):
     # mailto_list=['p1r06u3@gmail.com', '980555216@qq.com']           #收件人(列表)
-
     # mailto_list = maillists()  #收件人(列表)
     to_list = maillists()
-    me = "opencanary" + "<" + mail_user + "@" + mail_postfix + ">"
+    time1=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    me = "Opencanary蜜罐" + "<" + mail_user + "@" + mail_postfix + ">"
     msg = MIMEText(content, _subtype='html', _charset='utf-8')
-    msg['Subject'] = sub
+    my_email = [ ""+mail_user + "@" + mail_postfix+"" ]
+    msg['Subject'] = sub + time1
     msg['From'] = me
-    msg['To'] = ";".join(to_list)  #将收件人列表以‘;’分隔
+    msg['To'] = ";".join(my_email)  #将收件人列表以‘;’分隔
+    msg['Cc'] = ";".join(to_list)
     try:
         server = smtplib.SMTP()
         server.connect(mail_host)  #连接服务器
-        server.login(mail_user, mail_pass)  #登录操作
+        server.login(mail_user + "@" + mail_postfix, mail_pass)  #登录操作
         server.sendmail(me, to_list, msg.as_string())
         server.close()
-        print "email send success."
+        #print "email send success."
         return True
-    except Exception, e:
-        print "email send failed: " + str(e)
+    except Exception as e:
+        #print "email send failed: " + str(e)
         return False
 
 
