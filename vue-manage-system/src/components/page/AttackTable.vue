@@ -3,13 +3,40 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-tickets"></i> 攻击列表</el-breadcrumb-item>
+				<button type="button" class="el-button el-button--text el-button--small" style="padding: 3px 0px;" @click="refresh"><span>刷新</span></button>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
                 <el-input v-model="src_host" placeholder="攻击来源" class="handle-input mr10"></el-input>
                 <el-input v-model="src_port" placeholder="来源端口" class="handle-input mr10"></el-input>
-                <el-input v-model="logtype" placeholder="攻击类型" class="handle-input mr10"></el-input>
+                <!--el-input v-model="logtype" placeholder="攻击类型" class="handle-input mr10"></el-input-->
+				<el-select v-model="logtype" placeholder="攻击类型" class="handle-select mr10" style="width:150px">
+                    <el-option key="1" label="所有攻击类型" value=""></el-option>
+                    <el-option key="2" label="ftp登录尝试" value="2000"></el-option>
+                    <el-option key="3" label="web蜜罐被访问" value="3000"></el-option>
+                    <el-option key="4" label="ssh建立连接" value="4000"></el-option>
+                    <el-option key="5" label="ssh远程版本发送" value="4001"></el-option>
+                    <el-option key="6" label="ssh登录尝试" value="4002"></el-option>
+                    <el-option key="7" label="telnet登录尝试" value="6001"></el-option>
+                    <el-option key="8" label="端口(SYN)扫描" value="5001"></el-option>
+                    <el-option key="9" label="mysql登录尝试" value="8001"></el-option>
+                    <el-option key="10" label="git clone请求" value="16001"></el-option>
+                    <el-option key="11" label="ntp monlist请求" value="11001"></el-option>
+                    <el-option key="12" label="redis命令" value="17001"></el-option>
+                    <el-option key="13" label="tcp连接请求" value="18001"></el-option>
+                    <el-option key="14" label="vnc连接" value="12001"></el-option>
+                    <el-option key="15" label="windows远程登录" value="14001"></el-option>
+                    <el-option key="16" label="snmp扫描" value="13001"></el-option>
+                    <el-option key="17" label="sip请求" value="15001"></el-option>
+                    <el-option key="18" label="nmap os扫描" value="5002"></el-option>
+                    <el-option key="19" label="nmap null扫描" value="5003"></el-option>
+                    <el-option key="20" label="nmap xmas扫描" value="5004"></el-option>
+                    <el-option key="21" label="nmap fin扫描" value="5005"></el-option>
+                    <el-option key="22" label="mssql登录sql账户认证" value="9001"></el-option>
+                    <el-option key="23" label="mssql登录win身份认证" value="9002"></el-option>
+                    <el-option key="24" label="http代理登录尝试" value="7001"></el-option>
+                </el-select>
                 <el-input v-model="node_id" placeholder="探针节点" class="handle-input mr10"></el-input>
                 <el-input v-model="dst_host" placeholder="目标主机" class="handle-input mr10"></el-input>
                 <el-input v-model="dst_port" placeholder="目标端口" class="handle-input mr10"></el-input>
@@ -247,12 +274,12 @@
                 idx: -1
             }
         },
-        created() {
+        created() {console.log('created()');
             this.getData();
             this.getTotal();
         },
         computed: {
-            data() {
+            data() {console.log('computed:');
                 return this.tableData.filter((d) => {
                     let is_del = false;
                     for (let i = 0; i < this.del_list.length; i++) {
@@ -325,6 +352,11 @@
 				this.getData();
 				this.getTotal();
             },
+			refresh(){
+				this.is_search = true;
+				this.getData();
+				this.getTotal();
+			},
             // formatter(row, column) {
             //     return row.local_time;
             // },

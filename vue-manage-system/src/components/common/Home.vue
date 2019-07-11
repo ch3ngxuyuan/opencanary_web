@@ -2,6 +2,7 @@
     <div class="wrapper">
         <v-head></v-head>
         <v-sidebar></v-sidebar>
+		<v-load></v-load>
         <div class="content-box" :class="{'content-collapse':collapse}">
             <v-tags></v-tags>
             <div class="content">
@@ -20,6 +21,7 @@
     import vSidebar from './Sidebar.vue';
     import vTags from './Tags.vue';
     import bus from './bus';
+	import vLoad from './Loading.vue';
     export default {
         data(){
             return {
@@ -28,7 +30,7 @@
             }
         },
         components:{
-            vHead, vSidebar, vTags
+            vHead, vSidebar, vTags, vLoad
         },
         created(){
             bus.$on('collapse', msg => {

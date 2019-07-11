@@ -1,6 +1,7 @@
 <template>
     <div class="login-wrap">
         <div class="ms-title">后台管理系统</div>
+		<v-load></v-load>
         <div class="ms-login">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="demo-ruleForm">
                 <el-form-item prop="username">
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+	import vLoad from './../common/Loading.vue';
     export default {
         data: function(){
             return {
@@ -40,10 +42,14 @@
                 }
             }
         },
+        components:{
+            vLoad
+        },
         methods: {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+						this.loadtip("登录中...");
                         if (process.env.NODE_ENV === 'development') {
                             this.url = process.env.API_HOST+'/auth/';
                             this.$axios.post(this.url, {
@@ -55,6 +61,7 @@
                                 this.loginres = res.data.result;
                                 this.role = res.data.role;
                                 if (this.loginres){
+									this.$message.success('success!');
                                     localStorage.setItem('token', this.restoken);
                                     localStorage.setItem('role', this.role);
                                     this.$router.push('/');
@@ -62,35 +69,33 @@
 									this.$message.error(res.data.role);
                                     this.$router.push('/login')
                                 }
-
-                                // console.log(this.restoken);
                             })
 
                         } else{
-                                this.url = '/auth/';
-                                this.$axios.post(this.url, {
-                                    username: this.ruleForm.username,
-                                    password: this.ruleForm.password
-                                }).then((res) => {
-                                    // console.log('subumit login start')
-                                    this.restoken = res.data.token;
-                                    this.loginres = res.data.result;
-                                    this.role = res.data.role;
-                                    if (this.loginres){
-                                        localStorage.setItem('token', this.restoken);
-                                        localStorage.setItem('role', this.role);
-                                        this.$router.push('/');
-                                    } else{
-										this.$message.error(res.data.role);
-                                        this.$router.push('/login')
-                                    }
-                                    // console.log(this.restoken);
-                                })
+							this.url = '/auth/';
+							this.$axios.post(this.url, {
+								username: this.ruleForm.username,
+								password: this.ruleForm.password
+							}).then((res) => {
+								// console.log('subumit login start')
+								this.restoken = res.data.token;
+								this.loginres = res.data.result;
+								this.role = res.data.role;
+								if (this.loginres){
+									this.$message.success('success!');
+									localStorage.setItem('token', this.restoken);
+									localStorage.setItem('role', this.role);
+									this.$router.push('/');
+								} else{
+									this.$message.error(res.data.role);
+									this.$router.push('/login')
+								}
+							})
 
-                            }
-
+						}
+						
                     } else {
-                        console.log('error submit!!');
+                        this.$message.error('error submit!!');
                         return false;
                     }
                 });
@@ -100,37 +105,9 @@
 </script>
 
 <style scoped>
-    .login-wrap{
-        position: relative;
-        width:100%;
-        height:100%;
-    }
-    .ms-title{
-        position: absolute;
-        top:50%;
-        width:100%;
-        margin-top: -230px;
-        text-align: center;
-        font-size:30px;
-        color: #fff;
-
-    }
-    .ms-login{
-        position: absolute;
-        left:50%;
-        top:50%;
-        width:300px;
-        height:160px;
-        margin:-150px 0 0 -190px;
-        padding:40px;
-        border-radius: 5px;
-        background: #fff;
-    }
-    .login-btn{
-        text-align: center;
-    }
-    .login-btn button{
-        width:100%;
-        height:36px;
-    }
+    .login-wrap{position:relative;width:100%;height:100%}
+	.ms-title{position:absolute;top:50%;width:100%;margin-top:-230px;text-align:center;font-size:30px;color:#fff}
+	.ms-login{position:absolute;left:50%;top:50%;width:300px;height:160px;margin:-150px 0 0 -190px;padding:40px;border-radius:5px;background:#fff}
+	.login-btn{text-align:center}
+	.login-btn button{width:100%;height:36px}
 </style>

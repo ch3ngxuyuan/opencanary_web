@@ -66,7 +66,10 @@ class LogOp:
             if src_port:
                 where += " and src_port=" + src_port
             if logtype:
-                where += ' and logtype="' + str(logtype) + '"'
+                if logtype=='18001':
+                    where += ' and logtype in("18001","18002","18003","18004","18005") '
+                else:
+                    where += ' and logtype="' + str(logtype) + '"'
             if node_id:
                 where += ' and node_id="' + str(node_id) + '"'
             if dst_host:
@@ -161,7 +164,10 @@ class LogOp:
             if src_port:
                 where += " and src_port=" + src_port
             if logtype:
-                where += ' and logtype="' + str(logtype) + '"'
+                if logtype=='18001':
+                    where += ' and logtype in("18001","18002","18003","18004","18005") '
+                else:
+                    where += ' and logtype="' + str(logtype) + '"'
             if node_id:
                 where += ' and node_id="' + str(node_id) + '"'
             if dst_host:

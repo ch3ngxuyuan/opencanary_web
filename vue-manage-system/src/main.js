@@ -12,6 +12,17 @@ import Viser from 'viser-vue'
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 
+Vue.prototype.showload = function (){
+	document.getElementById('loading').style.display="";
+}
+Vue.prototype.hideload = function (){
+	document.getElementById('loading').style.display="none";
+}
+Vue.prototype.loadtip = function (str){
+	if(str=='') str='加载中...';
+	document.getElementById('load-tip').innerHTML=str;
+}
+
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     // const role = localStorage.getItem('role');
@@ -20,20 +31,25 @@ router.beforeEach((to, from, next) => {
 
     axios.interceptors.request.use(
         config =>{
+			Vue.prototype.showload();
             if (this.JWT_TOKEN){
                 // JWT_TOKEN = localStorage.getItem('token');
                 config.headers.Authorization = `opencanary ${this.JWT_TOKEN}`;   
             }
-        return config;
-    }, error => {
-        return Promise.reject(error)
-    })
+			return config;
+		}, error => {
+			Vue.prototype.hideload();
+			return Promise.reject(error)
+		}
+	)
 
     axios.interceptors.response.use(
         response => {
+			Vue.prototype.hideload();
             return response;
         },
         error => {
+			Vue.prototype.hideload();
             if (error.response) {
                 switch (error.response.status) {
                     case 401:
@@ -78,3 +94,4 @@ new Vue({
 }).$mount('#app');
 
 Vue.use(Viser)
+
